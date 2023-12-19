@@ -15,13 +15,13 @@
 	"Modules": [
 		{
 			"Name": "ImGuiTools",
-			"Type": "ClientOnlyNoCommandlet",
+			"Type": "EditorNoCommandlet",
 			"LoadingPhase": "PreLoadingScreen",
 			"TargetConfigurationDenyList": [ "Shipping" ]
 		},
 		{
 			"Name": "ImGuiToolsEditor",
-			"Type": "Editor",
+			"Type": "EditorNoCommandlet",
 			"LoadingPhase": "PreLoadingScreen",
 			"TargetConfigurationDenyList": [ "Shipping" ]
 		}
