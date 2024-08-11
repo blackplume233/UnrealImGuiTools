@@ -30,6 +30,14 @@ namespace ImGuiFileLoadUtils
 
 		}
 	}
+	void DrawLoadList(ImVec4 ColorVec, const TArray<FStringView>& LoadList)
+    	{
+    		for (int i = LoadList.Num() - 1; i >= 0; --i)
+    		{
+    			ImGui::TextColored(ColorVec, "%05d - %s", i + 1, Ansi(LoadList[i].GetData()));
+    
+    		}
+    	}
 }	// namespace ImGuiFileLoadUtils
 
 void FImGuiFileLoadDebugger::ToggleRecordCommand(const TArray<FString>& Args)
@@ -94,12 +102,12 @@ void FImGuiFileLoadDebugger::ToggleRecord()
 
 	if (bRecordingLoads)
 	{
-		AsyncLoadDelegateHandle = FCoreDelegates::OnAsyncLoadPackage.AddRaw(this, &FImGuiFileLoadDebugger::OnAsyncLoadPackage);
+		AsyncLoadDelegateHandle = FCoreDelegates::GetOnAsyncLoadPackage() .AddRaw(this, &FImGuiFileLoadDebugger::OnAsyncLoadPackage);
 		SyncLoadDelegateHandle = FCoreDelegates::OnSyncLoadPackage.AddRaw(this, &FImGuiFileLoadDebugger::OnSyncLoadPackage);
 	}
 	else
 	{
-		FCoreDelegates::OnAsyncLoadPackage.Remove(AsyncLoadDelegateHandle);
+		FCoreDelegates::GetOnAsyncLoadPackage().Remove(AsyncLoadDelegateHandle);
 		AsyncLoadDelegateHandle.Reset();
 
 
@@ -109,7 +117,7 @@ void FImGuiFileLoadDebugger::ToggleRecord()
 	UE_LOG(LogImGuiDebugLoad, Warning, TEXT("FImGuiFileLoadDebugger::ToggleRecord. New Recording state: %s"), bRecordingLoads ? TEXT("enabled") : TEXT("disabled"));
 }
 
-void FImGuiFileLoadDebugger::OnAsyncLoadPackage(const FString& PackageName)
+void FImGuiFileLoadDebugger::OnAsyncLoadPackage(FStringView PackageName)
 {
 	// NOTE: sync loads will kick off an async request with this callback, then flush it within the callstack. So true Async loads are loads that
 	//	come through this path, but didn't already come through via the SyncLoadPackage callback.
@@ -117,7 +125,7 @@ void FImGuiFileLoadDebugger::OnAsyncLoadPackage(const FString& PackageName)
 	{
 		if (bSpewToLog)
 		{
-			UE_LOG(LogImGuiDebugLoad, Log, TEXT("FImGuiFileLoadDebugger::OnAsyncLoadPackage - Async Loading Package: '%s'"), *PackageName);
+			UE_LOG(LogImGuiDebugLoad, Log, TEXT("FImGuiFileLoadDebugger::OnAsyncLoadPackage - Async Loading Package: '%s'"), PackageName.GetData());
 		}
 
 		AsyncLoadFiles.Add(PackageName);

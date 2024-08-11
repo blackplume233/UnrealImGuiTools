@@ -34,7 +34,7 @@ namespace GameDebuggerUtil
 
 void FImGuiToolsGameDebugger::DrawMainImGuiMenu()
 {
-	return; // This is super WIP and disabled at the moment.
+	//return; // This is super WIP and disabled at the moment.
 	
 	if (ImGui::BeginMenu("Game"))
 	{

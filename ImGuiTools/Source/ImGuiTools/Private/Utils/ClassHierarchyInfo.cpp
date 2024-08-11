@@ -31,10 +31,10 @@ namespace ClassHierarchyUtil
 	bool InsertIntoChildOrSelf(ImGuiTools::FHierarchicalClassInfo& ClassInfo, ImGuiTools::FHierarchicalClassInfo::UnloadedClassInfo& UnloadedClass, IAssetRegistry& AssetRegistry)
 	{
 		// for this unloaded class, see if class info class is an ancestor, if so, see if any children are as well first to claim ownership.
-		TArray<FName> AncestorNames;
-		AssetRegistry.GetAncestorClassNames(FName(UnloadedClass.ClassName), AncestorNames);
+		TArray<FTopLevelAssetPath> AncestorNames;
+		AssetRegistry.GetAncestorClassNames(FTopLevelAssetPath(UnloadedClass.ClassName), AncestorNames);
 
-		if (AncestorNames.Contains(ClassInfo.mClass->GetFName()))
+		if (AncestorNames.Contains(FTopLevelAssetPath(ClassInfo.mClass->GetName())))
 		{
 			// check for child inheritance first
 			bool ChildInherited = false;
@@ -148,12 +148,12 @@ void ImGuiTools::FHierarchicalRootClassInfo::Reset()
 	}
 
 	// Get all BP Classes
-	TSet<FName> DerivedNames;
+	TSet<FTopLevelAssetPath> DerivedNames;
 	{
-		TArray<FName> BaseNames;
-		BaseNames.Add(mRootClassInfo.mClass->GetFName());
+		TArray<FTopLevelAssetPath> BaseNames;
+		BaseNames.Add(FTopLevelAssetPath(mRootClassInfo.mClass->GetName()));
 
-		TSet<FName> Excluded;
+		TSet<FTopLevelAssetPath> Excluded;
 		AssetRegistry.GetDerivedClassNames(BaseNames, Excluded, DerivedNames);
 	}
 
@@ -175,7 +175,7 @@ void ImGuiTools::FHierarchicalRootClassInfo::Reset()
 					const FString ClassObjectPath = FPackageName::ExportTextPathToObjectPath(*GeneratedClassPath);
 					const FString ClassName = FPackageName::ObjectPathToObjectName(ClassObjectPath);
 
-					if (DerivedNames.Contains(*ClassName))
+					if (DerivedNames.Contains(FTopLevelAssetPath(ClassName)))
 					{
 						TSoftClassPtr<UObject> AssetSubClass = TSoftClassPtr<UObject>(FSoftObjectPath(ClassObjectPath));
 						if (UClass* SubClassUClass = Cast<UClass>(AssetSubClass.Get()))

@@ -20,7 +20,7 @@ public:
 	void ToggleRecord();
 
 	// Core Delegate callbacks
-	void OnAsyncLoadPackage(const FString& PackageName);
+	void OnAsyncLoadPackage(FStringView PackageName);
 	void OnSyncLoadPackage(const FString& PackageName);
 
 private:
@@ -28,7 +28,7 @@ private:
 	bool bRecordingLoads = false;
 	bool bSpewToLog = true;
 
-	TArray<FString> AsyncLoadFiles;
+	TArray<FStringView> AsyncLoadFiles;
 	TArray<FString> SyncLoadFiles;
 
 	FDelegateHandle AsyncLoadDelegateHandle;
